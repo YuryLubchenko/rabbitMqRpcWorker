@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -27,8 +26,6 @@ namespace Receiver
 
                 consumer.Received += (sender, eventArgs) =>
                 {
-                    string response = null;
-
                     var body = eventArgs.Body.ToArray();
                     var message = Encoding.UTF8.GetString(body);
 
@@ -39,7 +36,8 @@ namespace Receiver
                     var replyProps = ch.CreateBasicProperties();
                     replyProps.CorrelationId = props.CorrelationId;
 
-                    response = Fib(message);
+                    var response = Fib(message);
+
                     var responseBytes = Encoding.UTF8.GetBytes(response);
 
                     ch.BasicPublish(
